@@ -1,30 +1,73 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/routing";
 import { AdminPageLoader } from "@/components/admin/common/AdminPageLoader";
 import { ROUTES } from "@/lib/constants";
-import { getAdminSession } from "@/lib/admin-session";
-
-function subscribe() {
-  return () => undefined;
-}
+import { trackAdminLogin } from "@/lib/admin-access";
+import {
+  fetchAdminSessionFromCookie,
+  getAdminSession,
+  getAdminUserEmail,
+  setAdminSessionLocal,
+  syncAdminSessionCookie,
+} from "@/lib/admin-session";
 
 type AuthGateProps = {
   children: React.ReactNode;
 };
 
+type AuthStatus = "checking" | "authed" | "guest";
+
 export function AuthGate({ children }: AuthGateProps) {
   const router = useRouter();
-  const isAuthed = useSyncExternalStore(subscribe, getAdminSession, () => false);
+  const [status, setStatus] = useState<AuthStatus>("checking");
 
   useEffect(() => {
-    if (!isAuthed) {
+    let cancelled = false;
+
+    async function resolveSession() {
+      if (getAdminSession()) {
+        const email = getAdminUserEmail();
+        if (email) {
+          await syncAdminSessionCookie(email);
+          trackAdminLogin(email);
+        }
+        if (!cancelled) {
+          setStatus("authed");
+        }
+        return;
+      }
+
+      const email = await fetchAdminSessionFromCookie();
+      if (cancelled) {
+        return;
+      }
+
+      if (email) {
+        setAdminSessionLocal(email);
+        trackAdminLogin(email);
+        setStatus("authed");
+        return;
+      }
+
+      setStatus("guest");
+    }
+
+    void resolveSession();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (status === "guest") {
       router.replace(ROUTES.admin.login);
     }
-  }, [isAuthed, router]);
+  }, [status, router]);
 
-  if (!isAuthed) {
+  if (status !== "authed") {
     return <AdminPageLoader fullScreen />;
   }
 

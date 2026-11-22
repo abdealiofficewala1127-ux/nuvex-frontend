@@ -6,6 +6,11 @@ import { notFound } from "next/navigation";
 import { env } from "@/config/env";
 import { siteConfig } from "@/config/site.config";
 import { routing } from "@/i18n/routing";
+import { SiteSplash } from "@/components/website/common/SiteSplash";
+import { ThemeFontFaces } from "@/components/theme/ThemeFontFaces";
+import { resolvedThemeToCssVars, resolvedThemeToLegacyTokens } from "@/lib/appearance/css-vars";
+import { getActiveResolvedTheme, getAppearanceSettings } from "@/lib/server/appearance-store";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 import { themeToCssVars } from "@/lib/theme";
 import { themeService } from "@/services/theme.service";
 import { StoreProvider } from "@/store/provider";
@@ -44,6 +49,7 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: siteConfig.theme.colors.background,
 };
 
 export async function generateMetadata({ params }: Pick<LocaleLayoutProps, "params">): Promise<Metadata> {
@@ -58,7 +64,18 @@ export async function generateMetadata({ params }: Pick<LocaleLayoutProps, "para
     description: siteConfig.seo.description,
     keywords: [...siteConfig.seo.keywords],
     icons: {
-      icon: siteConfig.branding.favicon,
+      icon: [
+        { url: "/logos/favicon-32.png", sizes: "32x32", type: "image/png" },
+        { url: "/logos/favicon.png", sizes: "48x48", type: "image/png" },
+        { url: "/logos/favicon-192.png", sizes: "192x192", type: "image/png" },
+      ],
+      apple: "/logos/apple-touch-icon.png",
+    },
+    manifest: "/manifest.webmanifest",
+    appleWebApp: {
+      capable: true,
+      title: siteConfig.company.name,
+      statusBarStyle: "default",
     },
     openGraph: {
       title: siteConfig.seo.title,
@@ -76,7 +93,14 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     notFound();
   }
 
-  const theme = await themeService.getTheme();
+  const activeResolved = await getActiveResolvedTheme();
+  const appearanceSettings = await getAppearanceSettings();
+  const theme = activeResolved
+    ? resolvedThemeToLegacyTokens(activeResolved)
+    : await themeService.getTheme();
+  const bodyThemeStyle = activeResolved
+    ? resolvedThemeToCssVars(activeResolved)
+    : themeToCssVars(theme);
   const messages = await getMessages();
 
   return (
@@ -84,9 +108,15 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
       lang={locale}
       className={`${inter.variable} ${poppins.variable} ${notoDevanagari.variable}`}
     >
-      <body style={themeToCssVars(theme)}>
+      <body style={bodyThemeStyle}>
+        <ThemeFontFaces />
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <StoreProvider>{children}</StoreProvider>
+          <ThemeProvider initialResolved={activeResolved} initialSettings={appearanceSettings}>
+            <StoreProvider>
+              <SiteSplash />
+              {children}
+            </StoreProvider>
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -50,6 +50,38 @@ export function getDefaultPageAccess(
   ) as AdminUserPageAccess;
 }
 
+const NEW_USER_PAGE_ACCESS_IDS = new Set<AdminAccessPageId>([
+  "dashboard",
+  "productsListing",
+  "productCategories",
+  "productTypes",
+  "productSizes",
+  "productMaterials",
+  "productGrades",
+  "productStandards",
+  "productFinishes",
+  "productThreads",
+  "productHeadTypes",
+  "productDriveTypes",
+  "productIndustries",
+  "productApplications",
+  "productPackaging",
+  "productAttributes",
+  "usersProfile",
+]);
+
+export function getNewUserPageAccess(): AdminUserPageAccess {
+  const readPermissions = getDefaultModulePermissions("read");
+  const noPermissions = emptyModulePermissions();
+
+  return Object.fromEntries(
+    ADMIN_ACCESS_PAGES.map((page) => [
+      page.id,
+      NEW_USER_PAGE_ACCESS_IDS.has(page.id) ? { ...readPermissions } : { ...noPermissions },
+    ]),
+  ) as AdminUserPageAccess;
+}
+
 function legacyLevelToPermissions(level: unknown): AdminModulePermissions {
   if (level && typeof level === "object") {
     return normalizeModulePermissions(level);

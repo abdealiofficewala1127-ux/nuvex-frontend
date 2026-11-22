@@ -1,18 +1,41 @@
-import type { Product } from "@/types/product";
+import { normalizeSizeOptions } from "@/lib/product-size-options";
+import type { Product, ProductSizeOption } from "@/types/product";
+
+function buildSizeOptions(
+  labels: string[],
+  image: string,
+  gallery: string[] = [],
+): ProductSizeOption[] {
+  return normalizeSizeOptions(
+    labels.map((label, index) => ({
+      label,
+      slug: "",
+      image,
+      gallery: index === 0 ? gallery : [],
+      isDefault: index === 0,
+    })),
+    image,
+    gallery,
+  );
+}
 
 export const mockProducts: Product[] = [
   {
     id: "prd-hex-bolt",
-    name: "NX-HB Hex Bolt",
+    name: "HF-HB Hex Bolt",
     slug: "nx-hex-bolt",
     category: "Bolts",
     categorySlug: "bolts",
     subcategory: "Hex bolts",
     subcategorySlug: "hex-bolts",
-    sizes: ["M6 × 20 mm", "M8 × 25 mm", "M10 × 40 mm", "M12 × 50 mm", "M16 × 70 mm", "M20 × 90 mm"],
+    sizeOptions: buildSizeOptions(
+      ["M6 × 20 mm", "M8 × 25 mm", "M10 × 40 mm", "M12 × 50 mm", "M16 × 70 mm", "M20 × 90 mm"],
+      "/images/products/nx-hex-bolt.jpg",
+      ["/images/products/nx-hex-bolt.jpg", "/images/products/nx-hex-bolt-detail.jpg"],
+    ),
     shortDescription: "Metric hex head bolts for steel frames, machines, and site work.",
     description:
-      "NX-HB is a standard hex bolt for fabricators and maintenance stores that need a known grade, a clean thread, and sizes that match everyday drawings. Heads are marked, threads are rolled, and packing is counted so a site order does not arrive short.",
+      "HF-HB is a standard hex bolt for fabricators and maintenance stores that need a known grade, a clean thread, and sizes that match everyday drawings. Heads are marked, threads are rolled, and packing is counted so a site order does not arrive short.",
     image: "/images/products/nx-hex-bolt.jpg",
     gallery: ["/images/products/nx-hex-bolt.jpg", "/images/products/nx-hex-bolt-detail.jpg"],
     features: [
@@ -36,16 +59,19 @@ export const mockProducts: Product[] = [
   },
   {
     id: "prd-anchor-bolt",
-    name: "NX-AB Foundation Anchor Bolt",
+    name: "HF-AB Foundation Anchor Bolt",
     slug: "nx-anchor-bolt",
     category: "Bolts",
     categorySlug: "bolts",
     subcategory: "Anchor bolts",
     subcategorySlug: "anchor-bolts",
-    sizes: ["M12 × 150 mm", "M16 × 200 mm", "M20 × 250 mm", "M24 × 300 mm"],
+    sizeOptions: buildSizeOptions(
+      ["M12 × 150 mm", "M16 × 200 mm", "M20 × 250 mm", "M24 × 300 mm"],
+      "/images/products/nx-anchor-bolt.jpg",
+    ),
     shortDescription: "Bent and straight anchor bolts for bases, columns, and civil inserts.",
     description:
-      "NX-AB holds equipment bases and steel columns into concrete. Shank length, bend, and thread are cut to the pour drawing so the civil team is not guessing on site.",
+      "HF-AB holds equipment bases and steel columns into concrete. Shank length, bend, and thread are cut to the pour drawing so the civil team is not guessing on site.",
     image: "/images/products/nx-anchor-bolt.jpg",
     gallery: ["/images/products/nx-anchor-bolt.jpg"],
     features: [
@@ -68,16 +94,19 @@ export const mockProducts: Product[] = [
   },
   {
     id: "prd-hex-nut",
-    name: "NX-HN Hex Nut",
+    name: "HF-HN Hex Nut",
     slug: "nx-hex-nut",
     category: "Nuts",
     categorySlug: "nuts",
     subcategory: "Hex nuts",
     subcategorySlug: "hex-nuts",
-    sizes: ["M6", "M8", "M10", "M12", "M16", "M20", "M24"],
+    sizeOptions: buildSizeOptions(
+      ["M6", "M8", "M10", "M12", "M16", "M20", "M24"],
+      "/images/products/nx-hex-nut.jpg",
+    ),
     shortDescription: "Hex nuts matched to our bolt threads so the pair actually tightens.",
     description:
-      "NX-HN is the nut that belongs with the bolt, not a mixed leftover from another mill. Threads are gauged, height is to ISO, and the same finish as the bolt can be packed together.",
+      "HF-HN is the nut that belongs with the bolt, not a mixed leftover from another mill. Threads are gauged, height is to ISO, and the same finish as the bolt can be packed together.",
     image: "/images/products/nx-hex-nut.jpg",
     gallery: ["/images/products/nx-hex-nut.jpg"],
     features: [
@@ -100,16 +129,16 @@ export const mockProducts: Product[] = [
   },
   {
     id: "prd-lock-nut",
-    name: "NX-LN Nylon Lock Nut",
+    name: "HF-LN Nylon Lock Nut",
     slug: "nx-nylon-lock-nut",
     category: "Nuts",
     categorySlug: "nuts",
     subcategory: "Lock nuts",
     subcategorySlug: "lock-nuts",
-    sizes: ["M6", "M8", "M10", "M12", "M16"],
+    sizeOptions: buildSizeOptions(["M6", "M8", "M10", "M12", "M16"], "/images/products/nx-lock-nut.jpg"),
     shortDescription: "Nyloc nuts for joints that see vibration and should not walk off.",
     description:
-      "NX-LN uses a nylon insert to hold torque on fans, conveyors, and vehicle fittings. The insert is seated so the first tightening is usable, not crushed in the bag.",
+      "HF-LN uses a nylon insert to hold torque on fans, conveyors, and vehicle fittings. The insert is seated so the first tightening is usable, not crushed in the bag.",
     image: "/images/products/nx-lock-nut.jpg",
     gallery: ["/images/products/nx-lock-nut.jpg"],
     features: [
@@ -132,16 +161,19 @@ export const mockProducts: Product[] = [
   },
   {
     id: "prd-machine-screw",
-    name: "NX-MS Machine Screw",
+    name: "HF-MS Machine Screw",
     slug: "nx-machine-screw",
     category: "Screws",
     categorySlug: "screws",
     subcategory: "Machine screws",
     subcategorySlug: "machine-screws",
-    sizes: ["M3 × 10 mm", "M4 × 12 mm", "M5 × 16 mm", "M6 × 20 mm", "M8 × 25 mm"],
+    sizeOptions: buildSizeOptions(
+      ["M3 × 10 mm", "M4 × 12 mm", "M5 × 16 mm", "M6 × 20 mm", "M8 × 25 mm"],
+      "/images/products/nx-machine-screw.jpg",
+    ),
     shortDescription: "Pan and countersunk machine screws for panels, covers, and fittings.",
     description:
-      "NX-MS is for the small joints: junction box lids, nameplates, and sheet-metal covers. Heads are pan or CSK, drives are Phillips or hex socket, and lengths stay in the sizes electricians actually use.",
+      "HF-MS is for the small joints: junction box lids, nameplates, and sheet-metal covers. Heads are pan or CSK, drives are Phillips or hex socket, and lengths stay in the sizes electricians actually use.",
     image: "/images/products/nx-machine-screw.jpg",
     gallery: ["/images/products/nx-machine-screw.jpg"],
     features: [
@@ -164,16 +196,19 @@ export const mockProducts: Product[] = [
   },
   {
     id: "prd-self-tap",
-    name: "NX-ST Self-Tapping Screw",
+    name: "HF-ST Self-Tapping Screw",
     slug: "nx-self-tapping-screw",
     category: "Screws",
     categorySlug: "screws",
     subcategory: "Self-tapping screws",
     subcategorySlug: "self-tapping-screws",
-    sizes: ["No.6 × 12 mm", "No.8 × 20 mm", "No.10 × 25 mm", "No.12 × 40 mm"],
+    sizeOptions: buildSizeOptions(
+      ["No.6 × 12 mm", "No.8 × 20 mm", "No.10 × 25 mm", "No.12 × 40 mm"],
+      "/images/products/nx-self-tapping-screw.jpg",
+    ),
     shortDescription: "Sharp-point screws for sheet, wood battens, and light fabrication.",
     description:
-      "NX-ST cuts its own thread in thin steel and timber. Points are sharp, threads are coarse, and the head does not cam out on the first gun pass if the bit is the right size.",
+      "HF-ST cuts its own thread in thin steel and timber. Points are sharp, threads are coarse, and the head does not cam out on the first gun pass if the bit is the right size.",
     image: "/images/products/nx-self-tapping-screw.jpg",
     gallery: ["/images/products/nx-self-tapping-screw.jpg"],
     features: [
@@ -196,16 +231,19 @@ export const mockProducts: Product[] = [
   },
   {
     id: "prd-wire-nail",
-    name: "NX-WN Wire Nail",
+    name: "HF-WN Wire Nail",
     slug: "nx-wire-nail",
     category: "Nails",
     categorySlug: "nails",
     subcategory: "Wire nails",
     subcategorySlug: "wire-nails",
-    sizes: ["25 mm", "40 mm", "50 mm", "75 mm", "100 mm", "125 mm"],
+    sizeOptions: buildSizeOptions(
+      ["25 mm", "40 mm", "50 mm", "75 mm", "100 mm", "125 mm"],
+      "/images/products/nx-wire-nail.jpg",
+    ),
     shortDescription: "Common wire nails for carpentry, packing crates, and site timber.",
     description:
-      "NX-WN is a bright wire nail with a round head and a diamond point. Lengths are the ones carpenters call for, packed by kilogram so a contractor can order by weight or by count.",
+      "HF-WN is a bright wire nail with a round head and a diamond point. Lengths are the ones carpenters call for, packed by kilogram so a contractor can order by weight or by count.",
     image: "/images/products/nx-wire-nail.jpg",
     gallery: ["/images/products/nx-wire-nail.jpg"],
     features: [
@@ -228,16 +266,16 @@ export const mockProducts: Product[] = [
   },
   {
     id: "prd-concrete-nail",
-    name: "NX-CN Concrete Nail",
+    name: "HF-CN Concrete Nail",
     slug: "nx-concrete-nail",
     category: "Nails",
     categorySlug: "nails",
     subcategory: "Concrete nails",
     subcategorySlug: "concrete-nails",
-    sizes: ["25 mm", "40 mm", "50 mm", "65 mm"],
+    sizeOptions: buildSizeOptions(["25 mm", "40 mm", "50 mm", "65 mm"], "/images/products/nx-concrete-nail.jpg"),
     shortDescription: "Hardened nails for fixing into concrete, brick, and hard block.",
     description:
-      "NX-CN is a fluted, hardened nail for chasing into masonry when a gun or hammer is what the crew has. The point and heat treat are set for block, not for soft timber.",
+      "HF-CN is a fluted, hardened nail for chasing into masonry when a gun or hammer is what the crew has. The point and heat treat are set for block, not for soft timber.",
     image: "/images/products/nx-concrete-nail.jpg",
     gallery: ["/images/products/nx-concrete-nail.jpg"],
     features: [

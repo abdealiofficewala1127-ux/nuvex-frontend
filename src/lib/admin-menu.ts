@@ -7,7 +7,10 @@ export const ADMIN_MENU_ICONS = [
   "themeLogos",
   "themeColors",
   "themeTypography",
+  "themeShape",
+  "themeAppearance",
   "companyDetails",
+  "topBar",
   "contactDetails",
   "socialMediaLinks",
   "companyProfile",
@@ -17,14 +20,26 @@ export const ADMIN_MENU_ICONS = [
   "hero",
   "banners",
   "industries",
+  "industriesListing",
   "sectors",
   "products",
   "productsListing",
   "productCategories",
   "productTypes",
   "productSizes",
+  "productMaterials",
+  "productGrades",
+  "productStandards",
+  "productFinishes",
+  "productThreads",
+  "productHeadTypes",
+  "productDriveTypes",
+  "productIndustries",
+  "productApplications",
+  "productPackaging",
+  "productAttributes",
   "users",
-  "usersDetails",
+  "usersProfile",
   "usersAccess",
 ] as const;
 
@@ -33,11 +48,19 @@ export type AdminMenuIcon = (typeof ADMIN_MENU_ICONS)[number];
 export type AdminMenuNavLabelKey =
   | "overview"
   | "theme"
+  | "settings"
   | "themeListing"
   | "themeLogos"
+  | "themeBrandIdentity"
   | "themeColors"
   | "themeTypography"
+  | "themeShape"
+  | "themeAppearance"
+  | "themeTypography"
+  | "themeShape"
+  | "themeAppearance"
   | "companyDetails"
+  | "topBar"
   | "contactDetails"
   | "socialMediaLinks"
   | "companyProfile"
@@ -47,28 +70,53 @@ export type AdminMenuNavLabelKey =
   | "hero"
   | "banners"
   | "industries"
+  | "industriesListing"
   | "sectors"
   | "products"
   | "productsListing"
   | "productCategories"
   | "productTypes"
   | "productSizes"
+  | "productMaterials"
+  | "productGrades"
+  | "productStandards"
+  | "productFinishes"
+  | "productThreads"
+  | "productHeadTypes"
+  | "productDriveTypes"
+  | "productIndustries"
+  | "productApplications"
+  | "productPackaging"
+  | "productAttributes"
   | "userManagement"
   | "users"
-  | "userDetails"
-  | "pageAccess";
+  | "myProfile"
+  | "rolesPermissions";
 
 export type AdminMenuGroupLabelKey = Extract<
   AdminMenuNavLabelKey,
-  "userManagement" | "theme" | "companyDetails" | "teamMembers" | "hero" | "industries" | "products"
+  "userManagement" | "theme" | "settings" | "companyDetails" | "teamMembers" | "hero" | "industries" | "products"
 >;
 
 export type AdminMenuHeaderKey =
   | "dashboard"
   | "themeListing"
+  | "themeCreate"
+  | "themeEdit"
+  | "themeView"
+  | "themePreview"
   | "themeLogos"
+  | "themeLogosCreate"
+  | "themeLogosView"
+  | "themeLogosEdit"
   | "themeColors"
+  | "themeColorsCreate"
+  | "themeColorsView"
+  | "themeColorsEdit"
   | "themeTypography"
+  | "themeShape"
+  | "themeAppearance"
+  | "topBar"
   | "contactDetails"
   | "socialMediaLinks"
   | "companyProfile"
@@ -81,14 +129,83 @@ export type AdminMenuHeaderKey =
   | "teamsListingView"
   | "teamsListingEdit"
   | "banners"
+  | "bannersCreate"
+  | "bannersView"
+  | "bannersEdit"
+  | "industriesListing"
+  | "industriesListingCreate"
+  | "industriesListingView"
+  | "industriesListingEdit"
+  | "industriesListingSectors"
   | "sectors"
+  | "sectorsCreate"
+  | "sectorsView"
+  | "sectorsEdit"
   | "productsListing"
+  | "productsListingCreate"
+  | "productsListingView"
+  | "productsListingEdit"
   | "productCategories"
+  | "productCategoriesCreate"
+  | "productCategoriesView"
+  | "productCategoriesEdit"
   | "productTypes"
+  | "productTypesCreate"
+  | "productTypesView"
+  | "productTypesEdit"
   | "productSizes"
+  | "productSizesCreate"
+  | "productSizesView"
+  | "productSizesEdit"
+  | "productMaterials"
+  | "productMaterialsCreate"
+  | "productMaterialsView"
+  | "productMaterialsEdit"
+  | "productGrades"
+  | "productGradesCreate"
+  | "productGradesView"
+  | "productGradesEdit"
+  | "productStandards"
+  | "productStandardsCreate"
+  | "productStandardsView"
+  | "productStandardsEdit"
+  | "productFinishes"
+  | "productFinishesCreate"
+  | "productFinishesView"
+  | "productFinishesEdit"
+  | "productThreads"
+  | "productThreadsCreate"
+  | "productThreadsView"
+  | "productThreadsEdit"
+  | "productHeadTypes"
+  | "productHeadTypesCreate"
+  | "productHeadTypesView"
+  | "productHeadTypesEdit"
+  | "productDriveTypes"
+  | "productDriveTypesCreate"
+  | "productDriveTypesView"
+  | "productDriveTypesEdit"
+  | "productIndustries"
+  | "productIndustriesCreate"
+  | "productIndustriesView"
+  | "productIndustriesEdit"
+  | "productApplications"
+  | "productApplicationsCreate"
+  | "productApplicationsView"
+  | "productApplicationsEdit"
+  | "productPackaging"
+  | "productPackagingCreate"
+  | "productPackagingView"
+  | "productPackagingEdit"
+  | "productAttributes"
+  | "productAttributesCreate"
+  | "productAttributesView"
+  | "productAttributesEdit"
   | "users"
   | "usersListingView"
-  | "usersDetails"
+  | "usersListingEdit"
+  | "usersProfile"
+  | "usersProfileEdit"
   | "usersAccess"
   | "usersAccessCreate"
   | "usersAccessView"
@@ -100,19 +217,34 @@ export type AdminMenuAccessId =
   | "themeLogos"
   | "themeColors"
   | "themeTypography"
+  | "themeShape"
+  | "themeAppearance"
+  | "topBar"
   | "contactDetails"
   | "socialMediaLinks"
   | "companyProfile"
   | "teamRoles"
   | "teamsListing"
   | "banners"
+  | "industriesListing"
   | "sectors"
   | "productsListing"
   | "productCategories"
   | "productTypes"
   | "productSizes"
+  | "productMaterials"
+  | "productGrades"
+  | "productStandards"
+  | "productFinishes"
+  | "productThreads"
+  | "productHeadTypes"
+  | "productDriveTypes"
+  | "productIndustries"
+  | "productApplications"
+  | "productPackaging"
+  | "productAttributes"
   | "users"
-  | "usersDetails"
+  | "usersProfile"
   | "usersAccess";
 
 export type AdminMenuPage = {
@@ -153,12 +285,21 @@ export const ADMIN_MENU: readonly AdminMenuEntry[] = [
     children: [
       {
         kind: "page",
-        key: "usersDetails",
-        route: ROUTES.admin.users.details,
-        icon: "usersDetails",
-        navLabelKey: "userDetails",
-        headerKey: "usersDetails",
-        accessId: "usersDetails",
+        key: "usersProfile",
+        route: ROUTES.admin.users.profile,
+        icon: "usersProfile",
+        navLabelKey: "myProfile",
+        headerKey: "usersProfile",
+        accessId: "usersProfile",
+      },
+      {
+        kind: "page",
+        key: "usersRoles",
+        route: ROUTES.admin.users.roles,
+        icon: "usersAccess",
+        navLabelKey: "rolesPermissions",
+        headerKey: "usersAccess",
+        accessId: "usersAccess",
       },
       {
         kind: "page",
@@ -169,38 +310,20 @@ export const ADMIN_MENU: readonly AdminMenuEntry[] = [
         headerKey: "users",
         accessId: "users",
       },
-      {
-        kind: "page",
-        key: "usersAccess",
-        route: ROUTES.admin.users.access,
-        icon: "usersAccess",
-        navLabelKey: "pageAccess",
-        headerKey: "usersAccess",
-        accessId: "usersAccess",
-      },
     ],
   },
   {
     kind: "group",
     key: "theme",
     icon: "theme",
-    navLabelKey: "theme",
+    navLabelKey: "settings",
     children: [
-      {
-        kind: "page",
-        key: "themeListing",
-        route: ROUTES.admin.theme.listing,
-        icon: "themeListing",
-        navLabelKey: "themeListing",
-        headerKey: "themeListing",
-        accessId: "themeListing",
-      },
       {
         kind: "page",
         key: "themeLogos",
         route: ROUTES.admin.theme.logos,
         icon: "themeLogos",
-        navLabelKey: "themeLogos",
+        navLabelKey: "themeBrandIdentity",
         headerKey: "themeLogos",
         accessId: "themeLogos",
       },
@@ -221,6 +344,33 @@ export const ADMIN_MENU: readonly AdminMenuEntry[] = [
         navLabelKey: "themeTypography",
         headerKey: "themeTypography",
         accessId: "themeTypography",
+      },
+      {
+        kind: "page",
+        key: "themeShape",
+        route: ROUTES.admin.theme.shape,
+        icon: "themeShape",
+        navLabelKey: "themeShape",
+        headerKey: "themeShape",
+        accessId: "themeShape",
+      },
+      {
+        kind: "page",
+        key: "themeAppearance",
+        route: ROUTES.admin.theme.appearance,
+        icon: "themeAppearance",
+        navLabelKey: "themeAppearance",
+        headerKey: "themeAppearance",
+        accessId: "themeAppearance",
+      },
+      {
+        kind: "page",
+        key: "themeListing",
+        route: ROUTES.admin.theme.listing,
+        icon: "themeListing",
+        navLabelKey: "themeListing",
+        headerKey: "themeListing",
+        accessId: "themeListing",
       },
     ],
   },
@@ -249,6 +399,15 @@ export const ADMIN_MENU: readonly AdminMenuEntry[] = [
     children: [
       {
         kind: "page",
+        key: "industriesListing",
+        route: ROUTES.admin.industries.listing,
+        icon: "industriesListing",
+        navLabelKey: "industriesListing",
+        headerKey: "industriesListing",
+        accessId: "industriesListing",
+      },
+      {
+        kind: "page",
         key: "sectors",
         route: ROUTES.admin.industries.sectors,
         icon: "sectors",
@@ -267,7 +426,7 @@ export const ADMIN_MENU: readonly AdminMenuEntry[] = [
       {
         kind: "page",
         key: "productsListing",
-        route: ROUTES.admin.products.listing,
+        route: ROUTES.admin.products.root,
         icon: "productsListing",
         navLabelKey: "productsListing",
         headerKey: "productsListing",
@@ -300,6 +459,105 @@ export const ADMIN_MENU: readonly AdminMenuEntry[] = [
         headerKey: "productSizes",
         accessId: "productSizes",
       },
+      {
+        kind: "page",
+        key: "productMaterials",
+        route: ROUTES.admin.products.materials,
+        icon: "productMaterials",
+        navLabelKey: "productMaterials",
+        headerKey: "productMaterials",
+        accessId: "productMaterials",
+      },
+      {
+        kind: "page",
+        key: "productGrades",
+        route: ROUTES.admin.products.grades,
+        icon: "productGrades",
+        navLabelKey: "productGrades",
+        headerKey: "productGrades",
+        accessId: "productGrades",
+      },
+      {
+        kind: "page",
+        key: "productStandards",
+        route: ROUTES.admin.products.standards,
+        icon: "productStandards",
+        navLabelKey: "productStandards",
+        headerKey: "productStandards",
+        accessId: "productStandards",
+      },
+      {
+        kind: "page",
+        key: "productFinishes",
+        route: ROUTES.admin.products.finishes,
+        icon: "productFinishes",
+        navLabelKey: "productFinishes",
+        headerKey: "productFinishes",
+        accessId: "productFinishes",
+      },
+      {
+        kind: "page",
+        key: "productThreads",
+        route: ROUTES.admin.products.threads,
+        icon: "productThreads",
+        navLabelKey: "productThreads",
+        headerKey: "productThreads",
+        accessId: "productThreads",
+      },
+      {
+        kind: "page",
+        key: "productHeadTypes",
+        route: ROUTES.admin.products.headTypes,
+        icon: "productHeadTypes",
+        navLabelKey: "productHeadTypes",
+        headerKey: "productHeadTypes",
+        accessId: "productHeadTypes",
+      },
+      {
+        kind: "page",
+        key: "productDriveTypes",
+        route: ROUTES.admin.products.driveTypes,
+        icon: "productDriveTypes",
+        navLabelKey: "productDriveTypes",
+        headerKey: "productDriveTypes",
+        accessId: "productDriveTypes",
+      },
+      {
+        kind: "page",
+        key: "productIndustries",
+        route: ROUTES.admin.products.industries,
+        icon: "productIndustries",
+        navLabelKey: "productIndustries",
+        headerKey: "productIndustries",
+        accessId: "productIndustries",
+      },
+      {
+        kind: "page",
+        key: "productApplications",
+        route: ROUTES.admin.products.applications,
+        icon: "productApplications",
+        navLabelKey: "productApplications",
+        headerKey: "productApplications",
+        accessId: "productApplications",
+      },
+      {
+        kind: "page",
+        key: "productPackaging",
+        route: ROUTES.admin.products.packaging,
+        icon: "productPackaging",
+        navLabelKey: "productPackaging",
+        headerKey: "productPackaging",
+        accessId: "productPackaging",
+      },
+      {
+        kind: "page",
+        key: "productAttributes",
+        route: ROUTES.admin.products.attributes,
+        icon: "productAttributes",
+        navLabelKey: "productAttributes",
+        headerKey: "productAttributes",
+        accessId: "productAttributes",
+      },
     ],
   },
   {
@@ -308,6 +566,15 @@ export const ADMIN_MENU: readonly AdminMenuEntry[] = [
     icon: "companyDetails",
     navLabelKey: "companyDetails",
     children: [
+      {
+        kind: "page",
+        key: "topBar",
+        route: ROUTES.admin.company.topBar,
+        icon: "topBar",
+        navLabelKey: "topBar",
+        headerKey: "topBar",
+        accessId: "topBar",
+      },
       {
         kind: "page",
         key: "companyProfile",
@@ -372,6 +639,209 @@ type AdminHeaderRouteRule = {
 
 const ADMIN_HEADER_ROUTE_RULES: readonly AdminHeaderRouteRule[] = [
   {
+    headerKey: "themeCreate",
+    test: (pathname) => pathname === ROUTES.admin.theme.create,
+  },
+  {
+    headerKey: "themeEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.theme.listing}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "themePreview",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.theme.listing}/`) && pathname.endsWith("/preview"),
+  },
+  {
+    headerKey: "themeView",
+    test: (pathname) => {
+      const base = `${ROUTES.admin.theme.listing}/`;
+      if (!pathname.startsWith(base)) {
+        return false;
+      }
+
+      const suffix = pathname.slice(base.length);
+      return suffix.length > 0 && !suffix.includes("/");
+    },
+  },
+  {
+    headerKey: "themeLogosCreate",
+    test: (pathname) => pathname === ROUTES.admin.theme.logosCreate,
+  },
+  {
+    headerKey: "themeLogosEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.theme.logos}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "themeLogosView",
+    test: (pathname) => {
+      const base = `${ROUTES.admin.theme.logos}/`;
+      if (!pathname.startsWith(base)) {
+        return false;
+      }
+
+      const suffix = pathname.slice(base.length);
+      return suffix.length > 0 && !suffix.includes("/");
+    },
+  },
+  {
+    headerKey: "themeColorsCreate",
+    test: (pathname) => pathname === ROUTES.admin.theme.colorsCreate,
+  },
+  {
+    headerKey: "themeColorsEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.theme.colors}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "themeColorsView",
+    test: (pathname) => {
+      const base = `${ROUTES.admin.theme.colors}/`;
+      if (!pathname.startsWith(base)) {
+        return false;
+      }
+
+      const suffix = pathname.slice(base.length);
+      return suffix.length > 0 && !suffix.includes("/");
+    },
+  },
+  {
+    headerKey: "themeTypography",
+    test: (pathname) => pathname === ROUTES.admin.theme.typography,
+  },
+  {
+    headerKey: "themeShape",
+    test: (pathname) => pathname === ROUTES.admin.theme.shape,
+  },
+  {
+    headerKey: "themeAppearance",
+    test: (pathname) => pathname === ROUTES.admin.theme.appearance,
+  },
+  {
+    headerKey: "bannersCreate",
+    test: (pathname) => pathname === ROUTES.admin.banners.create,
+  },
+  {
+    headerKey: "bannersEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.banners.listing}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "bannersView",
+    test: (pathname) => {
+      const base = `${ROUTES.admin.banners.listing}/`;
+      if (!pathname.startsWith(base)) {
+        return false;
+      }
+
+      const suffix = pathname.slice(base.length);
+      return suffix.length > 0 && !suffix.includes("/");
+    },
+  },
+  {
+    headerKey: "productsListingCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.create,
+  },
+  {
+    headerKey: "productsListingEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.root}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productsListingView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.root}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productCategoriesCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.categoriesCreate,
+  },
+  {
+    headerKey: "productCategoriesEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.categories}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productCategoriesView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.categories}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productTypesCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.typesCreate,
+  },
+  {
+    headerKey: "productTypesEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.types}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productTypesView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.types}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productSizesCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.sizesCreate,
+  },
+  {
+    headerKey: "productSizesEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.sizes}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productSizesView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.sizes}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "industriesListingCreate",
+    test: (pathname) => pathname === ROUTES.admin.industries.create,
+  },
+  {
+    headerKey: "industriesListingEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.industries.listing}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "industriesListingSectors",
+    test: (pathname) => pathname.endsWith("/sectors") && pathname.startsWith(`${ROUTES.admin.industries.listing}/`),
+  },
+  {
+    headerKey: "industriesListingView",
+    test: (pathname) => {
+      const base = `${ROUTES.admin.industries.listing}/`;
+      if (!pathname.startsWith(base)) {
+        return false;
+      }
+
+      const suffix = pathname.slice(base.length);
+      return suffix.length > 0 && !suffix.includes("/");
+    },
+  },
+  {
+    headerKey: "sectorsCreate",
+    test: (pathname) => pathname === ROUTES.admin.industries.sectorsCreate,
+  },
+  {
+    headerKey: "sectorsEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.industries.sectors}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "sectorsView",
+    test: (pathname) => {
+      const base = `${ROUTES.admin.industries.sectors}/`;
+      if (!pathname.startsWith(base)) {
+        return false;
+      }
+
+      const suffix = pathname.slice(base.length);
+      return suffix.length > 0 && !suffix.includes("/");
+    },
+  },
+  {
     headerKey: "teamRolesCreate",
     test: (pathname) => pathname === ROUTES.admin.teamMembers.rolesCreate,
   },
@@ -414,22 +884,188 @@ const ADMIN_HEADER_ROUTE_RULES: readonly AdminHeaderRouteRule[] = [
     },
   },
   {
+    headerKey: "productMaterialsCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.materialsCreate,
+  },
+  {
+    headerKey: "productMaterialsEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.materials}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productMaterialsView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.materials}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productGradesCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.gradesCreate,
+  },
+  {
+    headerKey: "productGradesEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.grades}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productGradesView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.grades}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productStandardsCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.standardsCreate,
+  },
+  {
+    headerKey: "productStandardsEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.standards}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productStandardsView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.standards}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productFinishesCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.finishesCreate,
+  },
+  {
+    headerKey: "productFinishesEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.finishes}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productFinishesView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.finishes}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productThreadsCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.threadsCreate,
+  },
+  {
+    headerKey: "productThreadsEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.threads}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productThreadsView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.threads}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productHeadTypesCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.headTypesCreate,
+  },
+  {
+    headerKey: "productHeadTypesEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.headTypes}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productHeadTypesView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.headTypes}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productDriveTypesCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.driveTypesCreate,
+  },
+  {
+    headerKey: "productDriveTypesEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.driveTypes}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productDriveTypesView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.driveTypes}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productIndustriesCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.industriesCreate,
+  },
+  {
+    headerKey: "productIndustriesEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.industries}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productIndustriesView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.industries}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productApplicationsCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.applicationsCreate,
+  },
+  {
+    headerKey: "productApplicationsEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.applications}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productApplicationsView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.applications}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productPackagingCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.packagingCreate,
+  },
+  {
+    headerKey: "productPackagingEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.packaging}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productPackagingView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.packaging}/`) && pathname.endsWith("/view"),
+  },
+  {
+    headerKey: "productAttributesCreate",
+    test: (pathname) => pathname === ROUTES.admin.products.attributesCreate,
+  },
+  {
+    headerKey: "productAttributesEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.attributes}/`) && pathname.endsWith("/edit"),
+  },
+  {
+    headerKey: "productAttributesView",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.products.attributes}/`) && pathname.endsWith("/view"),
+  },
+  {
     headerKey: "users",
     test: (pathname) => pathname === ROUTES.admin.users.create,
   },
   {
+    headerKey: "usersListingEdit",
+    test: (pathname) =>
+      pathname.startsWith(`${ROUTES.admin.users.root}/`) &&
+      pathname.endsWith("/edit") &&
+      !pathname.startsWith(`${ROUTES.admin.users.profile}`) &&
+      !pathname.startsWith(`${ROUTES.admin.users.roles}/`),
+  },
+  {
+    headerKey: "usersProfileEdit",
+    test: (pathname) => pathname === ROUTES.admin.users.profileEdit,
+  },
+  {
     headerKey: "usersAccessCreate",
-    test: (pathname) => pathname === ROUTES.admin.users.accessCreate,
+    test: (pathname) => pathname === ROUTES.admin.users.rolesCreate,
   },
   {
     headerKey: "usersAccessEdit",
     test: (pathname) =>
-      pathname.startsWith(`${ROUTES.admin.users.access}/`) && pathname.endsWith("/edit"),
+      pathname.startsWith(`${ROUTES.admin.users.roles}/`) && pathname.endsWith("/edit"),
   },
   {
     headerKey: "usersAccessView",
     test: (pathname) => {
-      const base = `${ROUTES.admin.users.access}/`;
+      const base = `${ROUTES.admin.users.roles}/`;
       if (!pathname.startsWith(base)) {
         return false;
       }
@@ -451,8 +1087,8 @@ const ADMIN_HEADER_ROUTE_RULES: readonly AdminHeaderRouteRule[] = [
         suffix.length > 0 &&
         !suffix.includes("/") &&
         suffix !== "create" &&
-        suffix !== "details" &&
-        suffix !== "access"
+        suffix !== "profile" &&
+        suffix !== "roles"
       );
     },
   },
@@ -543,6 +1179,26 @@ export function resolveAdminHeaderKey(pathname: string): AdminMenuHeaderKey {
   }
 
   return resolveAdminHeaderKeyByPrefix(pathname) ?? "dashboard";
+}
+
+const ADMIN_VIEW_HEADER_KEYS = new Set<AdminMenuHeaderKey>([
+  "themeView",
+  "themeLogosView",
+  "themeColorsView",
+  "usersListingView",
+  "usersAccessView",
+  "teamRolesView",
+  "teamsListingView",
+  "bannersView",
+  "productsListingView",
+  "productCategoriesView",
+  "productTypesView",
+  "industriesListingView",
+  "sectorsView",
+]);
+
+export function shouldHideAdminHeaderTitle(pageKey: AdminMenuHeaderKey) {
+  return ADMIN_VIEW_HEADER_KEYS.has(pageKey);
 }
 
 function matchesAdminMenuRoute(pathname: string, route: string) {

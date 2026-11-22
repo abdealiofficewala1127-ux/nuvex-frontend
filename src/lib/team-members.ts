@@ -1,11 +1,10 @@
-import { getDefaultTeamMembers } from "@/data/mock/team-members";
 import { ADMIN_TEAM_STORE_KEY } from "@/lib/constants";
 import {
   TEAM_MEMBER_KEY_PATTERN,
   type TeamMember,
 } from "@/lib/team-members.config";
 
-export const TEAM_MEMBERS_UPDATED_EVENT = "nexquanta:team-members-updated";
+export const TEAM_MEMBERS_UPDATED_EVENT = "hakimi:team-members-updated";
 
 function readJson<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") {
@@ -85,8 +84,8 @@ function sanitizeTeamMember(input: Partial<TeamMember>, fallback?: TeamMember): 
 }
 
 function parseStoredTeamMembers(raw: unknown): TeamMember[] {
-  if (!Array.isArray(raw) || !raw.length) {
-    return getDefaultTeamMembers();
+  if (!Array.isArray(raw)) {
+    return [];
   }
 
   return raw
@@ -108,7 +107,7 @@ export function saveTeamMembersState(members: TeamMember[]) {
     .map((item) => sanitizeTeamMember(item))
     .filter((item): item is TeamMember => Boolean(item));
 
-  persistTeamMembers(nextState.length ? nextState : getDefaultTeamMembers());
+  persistTeamMembers(nextState);
 }
 
 export function findTeamMemberById(id: string): TeamMember | undefined {

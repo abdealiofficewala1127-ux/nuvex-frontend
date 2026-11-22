@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
-import { ButtonLink } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/buttons";
 import { BrandLogo } from "@/components/website/common/BrandLogo";
 import { ContactDetails } from "@/components/website/common/ContactDetails";
 import { NavList } from "@/components/website/common/NavList";
@@ -47,7 +47,7 @@ export async function Footer({ showCta = true }: FooterProps) {
       <div className={"footer__body"}>
         <div className={cn("container", "footer__main")}>
           <div className={"footer__brand"}>
-            <BrandLogo variant="light" className={"footer__logo"} height={28} />
+            <BrandLogo variant="light" className={"footer__logo"} height={36} />
             <p className={"footer__tagline"}>{siteConfig.company.tagline}</p>
             <div className={cn("footer__social", "footer__social--desktop")}>
               <h3 className={"footer__label"}>{t("footer.social")}</h3>

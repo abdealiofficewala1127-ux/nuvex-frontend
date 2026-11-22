@@ -1,4 +1,3 @@
-import type { AdminAccessPageId } from "@/lib/admin-menu";
 import {
   getDefaultPageAccess,
   normalizePageAccessMap,
@@ -6,6 +5,13 @@ import {
   type AdminPageAccessMap,
   type AdminUserPageAccess,
 } from "@/lib/admin-page-access.config";
+import { findStaticAdminByEmail } from "@/data/auth/users";
+import {
+  DEFAULT_ADMIN_ROLE_IDS,
+  ensureAdminRolesSeeded,
+  findAdminRoleById,
+  resolveDefaultRoleIdForLegacyRole,
+} from "@/lib/admin-roles";
 import {
   emptyAdminUserAddress,
   getAdminUserFullName,
@@ -22,12 +28,88 @@ export { ADMIN_USER_ROLES, getAdminUserFullName } from "@/lib/admin-users.config
 export type { AdminPageAccessMap, AdminPagePermission, AdminUserPageAccess, AdminModulePermissions } from "@/lib/admin-page-access.config";
 export {
   getDefaultPageAccess,
+  getNewUserPageAccess,
   getModulePermission,
   setModulePermission,
   userHasPermission,
 } from "@/lib/admin-page-access.config";
 
-export const ADMIN_USERS_UPDATED_EVENT = "nexquanta:admin-users-updated";
+export const ADMIN_USERS_UPDATED_EVENT = "hakimi:admin-users-updated";
+
+const DEFAULT_ADMIN_USER_ID = "user-administrator";
+
+function readUsersJson(): unknown {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const fromLocal = window.localStorage.getItem(ADMIN_USERS_STORE_KEY);
+    if (fromLocal) {
+      return JSON.parse(fromLocal) as unknown;
+    }
+
+    const fromSession = window.sessionStorage.getItem(ADMIN_USERS_STORE_KEY);
+    if (!fromSession) {
+      return null;
+    }
+
+    window.localStorage.setItem(ADMIN_USERS_STORE_KEY, fromSession);
+    window.sessionStorage.removeItem(ADMIN_USERS_STORE_KEY);
+    return JSON.parse(fromSession) as unknown;
+  } catch {
+    return null;
+  }
+}
+
+function writeUsersJson(users: AdminUserRecord[]) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.setItem(ADMIN_USERS_STORE_KEY, JSON.stringify(users));
+  window.sessionStorage.removeItem(ADMIN_USERS_STORE_KEY);
+}
+
+function buildDefaultUsers(now: string): AdminUserRecord[] {
+  ensureAdminRolesSeeded();
+
+  const staticUser = findStaticAdminByEmail(ADMIN_AUTH.demoEmail);
+  const displayName = staticUser?.name ?? "Admin User";
+  const nameParts = displayName.split(/\s+/).filter(Boolean);
+  const addressDefaults = emptyAdminUserAddress();
+
+  return [
+    {
+      id: DEFAULT_ADMIN_USER_ID,
+      username: "admin",
+      firstName: nameParts[0] ?? "Admin",
+      lastName: nameParts.slice(1).join(" ") || "User",
+      email: ADMIN_AUTH.demoEmail.toLowerCase(),
+      phoneCountryCode: DEFAULT_PHONE_COUNTRY_CODE,
+      phoneNumber: "",
+      image: "",
+      designation: "Administrator",
+      ...addressDefaults,
+      role: staticUser?.role ?? "admin",
+      roleId: DEFAULT_ADMIN_ROLE_IDS.administrator,
+      active: staticUser?.status !== "inactive",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ];
+}
+
+function ensureAdminUsersSeeded(): AdminUserRecord[] {
+  const existing = sanitizeUsers(readUsersJson());
+  if (existing.length) {
+    return existing;
+  }
+
+  const seeded = buildDefaultUsers(new Date().toISOString());
+  writeUsersJson(seeded);
+  return seeded;
+}
 
 function readJson<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") {
@@ -62,28 +144,6 @@ function notifyUsersUpdated() {
   window.dispatchEvent(new CustomEvent(ADMIN_USERS_UPDATED_EVENT));
 }
 
-function createDefaultAdminUser(): AdminUserRecord {
-  return {
-    id: "demo-admin",
-    firstName: "Abbas",
-    lastName: "Officewala",
-    email: ADMIN_AUTH.demoEmail,
-    phoneCountryCode: DEFAULT_PHONE_COUNTRY_CODE,
-    phoneNumber: "9727366046",
-    image: "",
-    designation: "Managing Director",
-    addressLine1: "Aavkar Avenue, Dawoodi Bohra Community Center",
-    addressLine2: "",
-    village: "Gandhinagar",
-    city: "Gandhinagar",
-    pincode: "382421",
-    state: "Gujarat",
-    role: "admin",
-    active: true,
-    createdAt: new Date().toISOString(),
-  };
-}
-
 function normalizeLegacyUser(raw: Record<string, unknown>): AdminUserRecord | null {
   const email = typeof raw.email === "string" ? raw.email.trim().toLowerCase() : "";
   if (!email) {
@@ -115,12 +175,22 @@ function normalizeLegacyUser(raw: Record<string, unknown>): AdminUserRecord | nu
   const role =
     raw.role === "admin" || raw.role === "editor" || raw.role === "viewer" ? raw.role : "viewer";
 
+  const roleId =
+    typeof raw.roleId === "string" && raw.roleId.trim()
+      ? raw.roleId.trim()
+      : resolveDefaultRoleIdForLegacyRole(role);
+
   const legacyHomeAddress =
     typeof raw.homeAddress === "string" ? raw.homeAddress.trim() : "";
   const addressDefaults = emptyAdminUserAddress();
+  const createdAt =
+    typeof raw.createdAt === "string" && raw.createdAt.trim()
+      ? raw.createdAt
+      : new Date().toISOString();
 
   return {
     id: typeof raw.id === "string" && raw.id.trim() ? raw.id : crypto.randomUUID(),
+    username: typeof raw.username === "string" ? raw.username.trim() : undefined,
     firstName,
     lastName,
     email,
@@ -147,40 +217,90 @@ function normalizeLegacyUser(raw: Record<string, unknown>): AdminUserRecord | nu
     state:
       typeof raw.state === "string" && raw.state.trim() ? raw.state.trim() : addressDefaults.state,
     role,
+    roleId,
     active: typeof raw.active === "boolean" ? raw.active : true,
-    createdAt:
-      typeof raw.createdAt === "string" && raw.createdAt.trim()
-        ? raw.createdAt
-        : new Date().toISOString(),
+    createdAt,
+    updatedAt:
+      typeof raw.updatedAt === "string" && raw.updatedAt.trim() ? raw.updatedAt : createdAt,
+    lastLoginAt:
+      typeof raw.lastLoginAt === "string" && raw.lastLoginAt.trim() ? raw.lastLoginAt : undefined,
   };
 }
 
 function sanitizeUsers(input: unknown): AdminUserRecord[] {
   if (!Array.isArray(input)) {
-    return [createDefaultAdminUser()];
+    return [];
   }
 
-  const users = input
+  return input
     .map((item) => (item && typeof item === "object" ? normalizeLegacyUser(item as Record<string, unknown>) : null))
     .filter((item): item is AdminUserRecord => Boolean(item));
-
-  if (!users.length) {
-    return [createDefaultAdminUser()];
-  }
-
-  const hasDemoAdmin = users.some(
-    (user) => user.email.toLowerCase() === ADMIN_AUTH.demoEmail.toLowerCase(),
-  );
-
-  if (!hasDemoAdmin) {
-    users.unshift(createDefaultAdminUser());
-  }
-
-  return users;
 }
 
 export function getAdminUsers(): AdminUserRecord[] {
-  return sanitizeUsers(readJson(ADMIN_USERS_STORE_KEY, null));
+  const users = sanitizeUsers(readUsersJson());
+  if (users.length) {
+    return users;
+  }
+
+  return ensureAdminUsersSeeded();
+}
+
+export function countAdminUsersWithRole(roleId: string): number {
+  if (!roleId.trim()) {
+    return 0;
+  }
+
+  return getAdminUsers().filter((user) => user.roleId === roleId).length;
+}
+
+export function ensureAdminUserForEmail(email: string | null | undefined): AdminUserRecord | undefined {
+  if (!email?.trim()) {
+    return undefined;
+  }
+
+  const normalized = email.trim().toLowerCase();
+  const existing = getAdminUserByEmail(normalized);
+  if (existing) {
+    return existing;
+  }
+
+  const staticUser = findStaticAdminByEmail(normalized);
+  if (!staticUser) {
+    return undefined;
+  }
+
+  ensureAdminRolesSeeded();
+  const nameParts = staticUser.name.split(/\s+/).filter(Boolean);
+  const addressDefaults = emptyAdminUserAddress();
+
+  const record: AdminUserRecord = {
+    id: normalized === ADMIN_AUTH.demoEmail.toLowerCase() ? DEFAULT_ADMIN_USER_ID : crypto.randomUUID(),
+    username: normalized.split("@")[0] ?? "user",
+    firstName: nameParts[0] ?? "Admin",
+    lastName: nameParts.slice(1).join(" ") || "User",
+    email: normalized,
+    phoneCountryCode: DEFAULT_PHONE_COUNTRY_CODE,
+    phoneNumber: "",
+    image: "",
+    designation: staticUser.role === "admin" ? "Administrator" : staticUser.role,
+    ...addressDefaults,
+    role: staticUser.role,
+    roleId: resolveDefaultRoleIdForLegacyRole(staticUser.role),
+    active: staticUser.status === "active",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const users = getAdminUsers();
+  if (users.some((user) => user.email === normalized)) {
+    return getAdminUserByEmail(normalized);
+  }
+
+  users.unshift(record);
+  writeUsersJson(users);
+  notifyUsersUpdated();
+  return record;
 }
 
 export function findAdminUserById(id: string): AdminUserRecord | undefined {
@@ -196,27 +316,51 @@ export function getAdminUserByEmail(email: string | null | undefined): AdminUser
   return getAdminUsers().find((user) => user.email.toLowerCase() === normalized);
 }
 
-export function saveAdminUser(input: AdminUserInput, pageAccess?: AdminUserPageAccess) {
+function syncLegacyRoleFromRoleId(input: AdminUserInput): AdminUserInput {
+  const roleRecord = input.roleId ? findAdminRoleById(input.roleId) : undefined;
+  if (!roleRecord) {
+    return input;
+  }
+
+  const name = roleRecord.name.toLowerCase();
+  let role: AdminUserRole = input.role;
+  if (name.includes("admin")) {
+    role = "admin";
+  } else if (name.includes("edit")) {
+    role = "editor";
+  } else if (name.includes("view")) {
+    role = "viewer";
+  }
+
+  return { ...input, role };
+}
+
+export function saveAdminUser(input: AdminUserInput) {
   const users = getAdminUsers();
-  const record: AdminUserRecord = {
+  const now = new Date().toISOString();
+  const normalizedInput = syncLegacyRoleFromRoleId({
     ...input,
-    email: input.email.trim().toLowerCase(),
+    roleId: input.roleId ?? resolveDefaultRoleIdForLegacyRole(input.role),
+  });
+
+  const record: AdminUserRecord = {
+    ...normalizedInput,
+    email: normalizedInput.email.trim().toLowerCase(),
     id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
+    createdAt: now,
+    updatedAt: now,
   };
 
   users.unshift(record);
-  writeJson(ADMIN_USERS_STORE_KEY, users);
-
-  const access = getAdminPageAccessMap();
-  access[record.id] = pageAccess ?? getDefaultPageAccess();
-  writeJson(ADMIN_PAGE_ACCESS_KEY, access);
-
+  writeUsersJson(users);
   notifyUsersUpdated();
   return record;
 }
 
-export function updateAdminUser(id: string, patch: Partial<AdminUserInput>) {
+export function updateAdminUser(
+  id: string,
+  patch: Partial<AdminUserInput> & { lastLoginAt?: string },
+) {
   const users = getAdminUsers();
   const index = users.findIndex((user) => user.id === id);
 
@@ -225,23 +369,31 @@ export function updateAdminUser(id: string, patch: Partial<AdminUserInput>) {
   }
 
   const current = users[index];
-  const next: AdminUserRecord = {
+  const merged = syncLegacyRoleFromRoleId({
     ...current,
     ...patch,
+    roleId: patch.roleId ?? current.roleId,
+    role: patch.role ?? current.role,
+  });
+
+  const next: AdminUserRecord = {
+    ...merged,
     id: current.id,
     createdAt: current.createdAt,
     email: patch.email?.trim().toLowerCase() ?? current.email,
+    updatedAt: new Date().toISOString(),
+    lastLoginAt: patch.lastLoginAt ?? current.lastLoginAt,
   };
 
   users[index] = next;
-  writeJson(ADMIN_USERS_STORE_KEY, users);
+  writeUsersJson(users);
   notifyUsersUpdated();
   return next;
 }
 
 export function deleteAdminUser(id: string) {
   const users = getAdminUsers().filter((user) => user.id !== id);
-  writeJson(ADMIN_USERS_STORE_KEY, users);
+  writeUsersJson(users);
 
   const access = getAdminPageAccessMap();
   delete access[id];
@@ -277,6 +429,33 @@ export function deleteAdminPageAccess(userId: string) {
   notifyUsersUpdated();
 }
 
+export function getEffectiveUserAccess(userIdOrEmail: string): AdminUserPageAccess {
+  const key = userIdOrEmail.trim();
+  if (!key) {
+    return getDefaultPageAccess("none");
+  }
+
+  const byId = findAdminUserById(key);
+  const user = byId ?? getAdminUserByEmail(key);
+
+  if (user?.roleId) {
+    const role = findAdminRoleById(user.roleId);
+    if (role?.active) {
+      return role.permissions;
+    }
+  }
+
+  if (user) {
+    return getAdminUserPageAccess(user.id);
+  }
+
+  if (key.toLowerCase() === ADMIN_AUTH.demoEmail.toLowerCase()) {
+    return getDefaultPageAccess("full");
+  }
+
+  return getDefaultPageAccess("full");
+}
+
 export function resolveAdminUserRole(email: string | null | undefined): AdminUserRole {
   return getAdminUserByEmail(email)?.role ?? "admin";
 }
@@ -284,4 +463,9 @@ export function resolveAdminUserRole(email: string | null | undefined): AdminUse
 export function formatAdminUserLabel(user: AdminUserRecord) {
   const name = getAdminUserFullName(user);
   return name ? `${name} · ${user.email}` : user.email;
+}
+
+export function getAdminUserRoleLabel(user: AdminUserRecord): string {
+  const role = user.roleId ? findAdminRoleById(user.roleId) : undefined;
+  return role?.name ?? user.role;
 }

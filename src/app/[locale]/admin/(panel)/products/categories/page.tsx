@@ -1,10 +1,10 @@
 import { AdminPage } from "@/components/admin/common/AdminPage";
-import { AdminComingSoon } from "@/components/admin/common/AdminComingSoon";
+import { MasterEntityListing } from "@/components/admin/products/master/MasterEntityListing";
 
-export default function AdminProductCategoriesPage() {
+export default function Page() {
   return (
-    <AdminPage pageKey="productCategories">
-      <AdminComingSoon />
+    <AdminPage pageKey="productCategories" wide>
+      <MasterEntityListing masterKey="categories" />
     </AdminPage>
   );
 }

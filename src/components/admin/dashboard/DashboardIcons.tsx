@@ -198,6 +198,15 @@ export function ContactDetailsIcon({ className }: IconProps) {
   );
 }
 
+export function TopBarIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="4" y="6" width="16" height="4" rx="1.2" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M7 14h10M7 17h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function CompanyProfileIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -398,7 +407,10 @@ const navIcons = {
   themeLogos: ThemeLogosIcon,
   themeColors: ThemeColorsIcon,
   themeTypography: ThemeTypographyIcon,
+  themeShape: ThemeIcon,
+  themeAppearance: SettingsIcon,
   companyDetails: CompanyIcon,
+  topBar: TopBarIcon,
   contactDetails: ContactDetailsIcon,
   socialMediaLinks: SocialMediaLinksIcon,
   companyProfile: CompanyProfileIcon,
@@ -408,14 +420,28 @@ const navIcons = {
   hero: HeroSlidesIcon,
   banners: HeroSlidesIcon,
   industries: IndustriesIcon,
+  industriesListing: IndustriesIcon,
   sectors: SectorsIcon,
   products: ProductsIcon,
   productsListing: ProductsListingIcon,
   productCategories: ProductCategoriesIcon,
   productTypes: ProductTypesIcon,
   productSizes: ProductSizesIcon,
+  productMaterials: ProductSizesIcon,
+  productGrades: ProductSizesIcon,
+  productStandards: ProductSizesIcon,
+  productFinishes: ProductSizesIcon,
+  productThreads: ProductSizesIcon,
+  productHeadTypes: ProductSizesIcon,
+  productDriveTypes: ProductSizesIcon,
+  productIndustries: IndustriesIcon,
+  productApplications: IndustriesIcon,
+  productPackaging: ProductSizesIcon,
+  productAttributes: ProductTypesIcon,
   users: UsersIcon,
   usersDetails: UserDetailsIcon,
+  usersProfile: UserDetailsIcon,
+  usersAccess: AccessIcon,
   company: CompanyIcon,
   services: ServicesIcon,
   projects: ProjectsIcon,
@@ -423,7 +449,6 @@ const navIcons = {
   technologies: TechnologiesIcon,
   messages: MessagesIcon,
   settings: SettingsIcon,
-  usersAccess: AccessIcon,
 } as const;
 
 export function DashboardStatIcon({ name, className }: { name: keyof typeof statIcons; className?: string }) {

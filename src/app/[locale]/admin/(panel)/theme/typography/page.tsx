@@ -1,10 +1,10 @@
 import { AdminPage } from "@/components/admin/common/AdminPage";
-import { AdminComingSoon } from "@/components/admin/common/AdminComingSoon";
+import { TypographySettingsPanel } from "@/components/admin/appearance/TypographySettingsPanel";
 
-export default function AdminThemeTypographyPage() {
+export default function AdminTypographySettingsPage() {
   return (
-    <AdminPage pageKey="themeTypography">
-      <AdminComingSoon />
+    <AdminPage pageKey="themeTypography" wide hideDescription>
+      <TypographySettingsPanel />
     </AdminPage>
   );
 }
